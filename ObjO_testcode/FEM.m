@@ -30,7 +30,7 @@ classdef FEMcomputer < handle
         end
     end
     methods (Access = public)        
-        function obj = compute(obj)
+        function obj = solve(obj)
             obj.connectDOF();%
             obj.computeKelement();
             obj.computeForce();%
