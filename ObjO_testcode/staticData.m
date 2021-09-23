@@ -1,4 +1,3 @@
-
 %% INPUT DATA
 
 % Material properties

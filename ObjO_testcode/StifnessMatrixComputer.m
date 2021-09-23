@@ -1,28 +1,33 @@
-classdef StifnessMatrixComputer
+classdef StifnessMatrixComputer < handle
     
     properties
         Td
-        Kel
         R
         K
+        Kg
     end
     
     methods
-        function obj = StifnessMatrixComputer()
-            %UNTITLED2 Construct an instance of this class
-            %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
+        function obj = StifnessMatrixComputer(s)
+                obj.computeStifnessMatrix();
         end
         
-        function obj = computeStifnessMatrix(obj)
-                a = ConnectionMatrix();
-                obj.Td = a.td;
-                b = RotationMatrix();
-                obj.R = b.r;
-                c = c.K;
-                
-
+        
+        function [Td,R,K,Kg] = computeStifnessMatrix(obj,cParams)
             
+                a = ConnectionMatrix(cParams);
+                a.computeConnectionMatrix();
+                obj.Td = a.td;
+                
+                b = RotationMatrix(cParams);
+                R = b.r;
+                
+                c = Kcomputer(cParams);
+                K = c.k;
+                
+                d = KglobalAssembler(cParams);
+                Kg = d.kg;
+                   
         end
     end
 end

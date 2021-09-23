@@ -1,24 +1,32 @@
-classdef Kcomputer
+classdef Kcomputer < handle
     %UNTITLED5 Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties
+    properties (Access = public)
         k
+        dim
+        data
     end
     
-    methods
-        function obj = Kcomputer()
-            computeK();
+    methods (Access = public)
+        function obj = Kcomputer(cParams)
+            obj.loadData(cParams);
         end
         
+        function obj = loadData(obj,cParams)
+            obj.dim = cParams.dim;
+            obj.data = cParams.data;
+        end
+    end
+    methods (Access = public)
         function obj = computeK(obj)
-            a = cParams.data.x;
-            b = cParams.data.Tnod;
-            c = cParams.data.mat;
-            d = cParams.data.Tmat;
-            K = zeros(6,6,cParams.dim.nel);
+            a = obj.data.x;
+            b = obj.data.Tnod;
+            c = obj.data.mat;
+            d = obj.data.Tmat;
+            K = zeros(6,6,obj.dim.nel);
             
-            for e = 1:cParams.dim.nel
+            for e = 1:obj.dim.nel
                 x1 = a(b(e,1),1);
                 x2 = a(b(e,2),1);
                 y1 = a(b(e,1),2);

@@ -6,6 +6,8 @@
 
 clear; clc;
 
-staticFileFata = 'staticData.m';
-StaticCase = Tester(staticFileData);
+staticfiledata = 'staticData.m';
+
+staticCase = Tester(staticfiledata);
+
 

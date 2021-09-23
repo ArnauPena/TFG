@@ -1,20 +1,27 @@
-classdef RotationMatrix
+classdef RotationMatrix < handle
     
     properties
-        Rot
+        r
+        data
+        dim
     end
     
     methods (Access = public)
-        function obj = RotationMatrix()
-            rotationMatrixComputer();
+        function obj = RotationMatrix(cParams)
+            obj.loadData(cParams);
+        end
+        
+        function obj = loadData(obj,cParams)
+            obj.dim = cParams.dim;
+            obj.data = cParams.data;
         end
     end
-    methods (Access = private)
-        function computeRotationMatrix(obj)
-            a = cParams.data.x;
-            b = cParams.data.Tnod;
-            R = zeros(6,6,cParams.dim.nel);
-            for e = 1:cParams.dim.nel
+    methods (Access = public)
+        function obj = computeRotationMatrix(obj)
+            a = obj.data.x;
+            b = obj.data.Tnod;
+            R = zeros(6,6,obj.dim.nel);
+            for e = 1:obj.dim.nel
                 x1 = a(b(e,1),1);
                 x2 = a(b(e,2),1);
                 y1 = a(b(e,1),2);

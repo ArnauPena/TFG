@@ -11,8 +11,6 @@ classdef FEMcomputer < handle
         K
         displacement
         staticfiledata
-        u
-        vl
     end
     
     methods (Access = public)
@@ -33,14 +31,13 @@ classdef FEMcomputer < handle
     methods (Access = public)        
         function obj = solve(obj)
             obj.computeStifnessMatrix();
-            obj.computeFext();
-            obj.solveSystem();
+%             obj.computeFext();
+%             obj.solveSystem();
         end  
     end
     
     methods (Access = private)
         function obj = computeStifnessMatrix(obj)
-            
             s.data = obj.data;
             s.dim = obj.dim;
             
@@ -58,28 +55,20 @@ classdef FEMcomputer < handle
             c.computeK();
             obj.K = c.k;
             s.K = obj.K;
-                        
-            d = KglobalAssembler(s);
-            d.KglobalAssembly();
-            obj.Kglobal = d.kg;
+%             
+%             
+%             d = KglobalAssembler(s);
+%             d.KglobalAssembly();
+%             obj.Kglobal = d.kg;
         end
         
         function obj = computeFext(obj)
-           s.data = obj.data;
-           s.dim = obj.dim;
-           f = ForceComputer(s);
-           f.computeForce();
+           f = ForceComputer();
            obj.Fext = f.F;
         end
    
         function obj = solveSystem(obj)
-            s.data = obj.data;
-            s.dim = obj.dim;
-            s.Kglobal = obj.Kglobal;
-            s.R = obj.R;
-            s.Fext = obj.Fext;
-            syst = SystemSolution(s);
-            obj.vl = syst.vl;
+            syst = SystemSolution();
             obj.u = syst.u;
         end
            
