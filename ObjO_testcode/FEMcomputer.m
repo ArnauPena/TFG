@@ -48,28 +48,28 @@ classdef FEMcomputer < handle
         function obj = computeStifnessMatrix(obj)
             s.data = obj.data;
             s.dim  = obj.dim;
-            kg = StifnessMatrixComputer(s);
-            kg.computeStifnessMatrix();
-            obj.Kglobal = kg.Kg;
+%             kg = StifnessMatrixComputer(s);
+%             kg.computeStifnessMatrix();
+%             obj.Kglobal = kg.Kg;
 
-%             a = ConnectivityMatrix(s);
-%             a.computeConnectivityMatrix();
-%             obj.Td = a.td;
-%             s.Td = obj.Td;
-%             
-%             b = RotationMatrix(s);
-%             b.computeRotationMatrix();
-%             obj.R = b.r;
-%             s.R = obj.R;
-%             
-%             c = Kcomputer(s);
-%             c.computeK();
-%             obj.K = c.k;
-%             s.K = obj.K;
-%                         
-%             d = KglobalAssembler(s);
-%             d.assembleKglobal();
-%             obj.Kglobal = d.kg;
+            a = ConnectivityMatrix(s);
+            a.computeConnectivityMatrix();
+            obj.Td = a.td;
+            s.Td = obj.Td;
+            
+            b = RotationMatrix(s);
+            b.computeRotationMatrix();
+            obj.R = b.r;
+            s.R = obj.R;
+            
+            c = Kcomputer(s);
+            c.computeK();
+            obj.K = c.k;
+            s.K = obj.K;
+                        
+            d = KglobalAssembler(s);
+            d.assembleKglobal();
+            obj.Kglobal = d.kg;
         end
         
         function obj = computeFext(obj)
