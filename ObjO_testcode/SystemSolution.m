@@ -17,19 +17,12 @@ classdef SystemSolution < handle
         function obj = systemSolver(obj,cParams)
             
             e = PartComputer(cParams);
-            e.computePart();
+            e.computePart(); 
             obj.vl = e.vl;
             obj.vr = e.vr;
             obj.ur = e.ur;
-            obj.Kll = e.Kll;
-            obj.Krr = e.Krr;
-            obj.Krl = e.Krl;
-            obj.Klr = e.Klr;
-            obj.Fr = e.Fr;
-            obj.Fl = e.Fl;  
-            
-            s.vl = obj.vl;
-            s.vr = obj.vl;
+            s.vl = e.vl;
+            s.vr = e.vl;
             s.ur = e.ur;
             s.Kll = e.Kll;
             s.Krr = e.Krr;

@@ -1,26 +1,23 @@
-classdef ConnectionMatrix < handle
+classdef ConnectivityMatrix < handle
     
-    properties
-        dim
-        data
+    properties (Access = public)
         td
     end
     
-    methods (Access = public)
-        function obj = ConnectionMatrix(cParams)
-                obj.loadData(cParams);
-        end
-        
-        function obj = loadData(obj,cParams)
-            obj.dim = cParams.dim;
-            obj.data = cParams.data;
-        end
-        
+    properties (Access = private)
+        dim
+        data
     end
+    
     methods (Access = public)
-        function obj = computeConnectionMatrix(obj)
+        
+        function obj = ConnectivityMatrix(cParams)
+                obj.init(cParams);
+        end
+        
+        function obj = computeConnectivityMatrix(obj)
             nel = obj.dim.nel;
-            ni = obj.dim.ni;
+            ni  = obj.dim.ni;
             nne = obj.dim.nne;
             vtd = zeros(nel,nne*ni);
             for e = 1:nel
@@ -33,6 +30,17 @@ classdef ConnectionMatrix < handle
             end
             obj.td = vtd;
         end
+       
+        
+    end
+    
+    methods (Access = private)
+        
+        function obj = init(obj,cParams)
+            obj.dim  = cParams.dim;
+            obj.data = cParams.data;
+        end
+        
     end
 end
 

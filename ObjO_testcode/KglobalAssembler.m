@@ -1,15 +1,17 @@
 classdef KglobalAssembler < handle
 
     
-    properties
+    properties (Access = public)
         kg
-        dim
-        data
+    end
+    
+    properties (Access = private)
         Td
         K
         R
+        dim
+        data
     end
-    
     methods
         function obj = KglobalAssembler(cParams)
             obj.loadData(cParams);
@@ -23,7 +25,7 @@ classdef KglobalAssembler < handle
             obj.R = cParams.R;
         end
         
-        function obj = KglobalAssembly(obj)
+        function obj = assembleKglobal(obj)
             
         s = obj.Td;
         nel = obj.dim.nel;

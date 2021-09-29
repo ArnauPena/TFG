@@ -1,9 +1,12 @@
 classdef ForceComputer < handle
     
-    properties
-        F
+    properties (Access = public)
         dim
         data
+    end
+    
+    properties (Access = private)
+        F
     end
     
     methods
@@ -17,7 +20,7 @@ classdef ForceComputer < handle
         end
     
         
-        function obj = computeForce(obj)
+        function f = computeForce(obj)
             f=zeros(obj.dim.ndof,1);
             Fdata = obj.data.Fdata;
             for k = 1:size(Fdata,1)
@@ -34,7 +37,6 @@ classdef ForceComputer < handle
                     f(3*Node,1) = f(3*Node,1) + Fmag;
                 end
             end
-            obj.F = f;
         end
     end
 end

@@ -6,8 +6,9 @@
 
 clear; clc;
 
+solver_type = 'ITERATIVE';
 staticfiledata = 'staticData.m';
 
-staticCase = Tester(staticfiledata);
+staticCase = Tester(staticfiledata,solver_type);
 
 

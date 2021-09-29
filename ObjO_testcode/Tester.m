@@ -1,17 +1,22 @@
 classdef Tester < handle
     
+    properties (Access = private)
+        u  
+    end
     properties (Access = public)
-        u
-        displacements  
+        displacements
     end
     
     methods (Access = public)
-        function obj = Tester(staticfiledata)
-            Test = FEMcomputer(staticfiledata);
+        function obj = Tester(staticfiledata,solver_type)
+            Test = FEMcomputer(staticfiledata,solver_type);
+            Test.solve();
             obj.displacements = Test.displacement;
             obj.u = Test.u;
             obj.computeTest();
         end
+    end
+    methods (Access = private)
         function obj = computeTest(obj)
             obj.check();
         end
