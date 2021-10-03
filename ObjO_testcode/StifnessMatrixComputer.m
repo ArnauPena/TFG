@@ -5,9 +5,10 @@ classdef StifnessMatrixComputer < handle
         dim
         Td
         R
-        K
+        Kel
         x1,x2
         y1,y2
+        dX, dY
         l
     end
     
@@ -20,111 +21,124 @@ classdef StifnessMatrixComputer < handle
             obj.init(cParams);
         end
         
-        function obj = computeStifnessMatrix(obj)
-            
+        function obj = compute(obj)           
             obj.computeConnectivityMatrix();
             obj.computeRotationMatrix();
             obj.computeK();
             obj.assembleKglobal();
-                   
         end
     end
     
     methods (Access = private)
         
+        function obj = init(obj,cParams)
+            obj.data = cParams.data;
+            obj.dim  = cParams.dim;
+        end
+        
         function obj = computeConnectivityMatrix(obj)
             nel = obj.dim.nel;
             ni  = obj.dim.ni;
             nne = obj.dim.nne;
-            vtd = zeros(nel,nne*ni);
+            Tdv = zeros(nel,nne*ni);
             
-            for e = 1:nel
+            for iElement = 1:nel
                 for i = 1:nne
                     for j = 1:ni
                         I = ni*(i-1)+j;
-                        vtd(e,I)= ni*(obj.data.Tnod(e,i)-1)+j;
+                        Tdv(iElement,I)= ni*(obj.data.Tnod(iElement,i)-1)+j;
                     end
                 end
             end
-            obj.Td = vtd;
+            obj.Td = Tdv;
         end
         
         function obj = computeRotationMatrix(obj)
             obj.computeGeometry();
-            r = zeros(6,6,obj.dim.nel);
-            dx = obj.x2-obj.x1;
-            dy = obj.y2-obj.y1;
-            
-            for e = 1:obj.dim.nel
-                r(1,1:2,e) = 1/obj.l(e)*[dx(e) dy(e)];
-                r(2,1:2,e) = 1/obj.l(e)*[-dy(e) dx(e)];
-                r(3,3,e)   = 1/obj.l(e);
-                r(4,4:5,e) = 1/obj.l(e)*[dx(e) dy(e)];
-                r(5,4:5,e) = 1/obj.l(e)*[-dy(e) dx(e)];
-                r(6,6,e)   = 1/obj.l(e);
+            Rv = zeros(6,6,obj.dim.nel);
+            dx = obj.dX;
+            dy = obj.dY;
+            for iElement = 1:obj.dim.nel
+                Rv(1,1:2,iElement) = [dx(iElement) dy(iElement)];
+                Rv(2,1:2,iElement) = [-dy(iElement) dx(iElement)];
+                Rv(3,3,iElement)   = 1;
+                Rv(4,4:5,iElement) = [dx(iElement) dy(iElement)];
+                Rv(5,4:5,iElement) = [-dy(iElement) dx(iElement)];
+                Rv(6,6,iElement)   = 1;
+                Rv(:,:,iElement)   = Rv(:,:,iElement)/obj.l(iElement);
             end
-            obj.R = r;
+            obj.R = Rv;
         end
         
         function obj = computeK(obj)
-            c = obj.data.mat;
-            d = obj.data.Tmat;
-            k = zeros(6,6,obj.dim.nel);
+            a = obj.data.mat;
+            b = obj.data.Tmat;
+            c = obj.dim.nelDOF;
+            d = obj.dim.nel;
+            Kelv = zeros(c,c,d);
             L = obj.l;
-            
-            for e = 1:obj.dim.nel
-                val = 1/L(e)^3*c(d(e),3)*c(d(e),1);
-                val2 = c(d(e),1)*c(d(e),2)/L(e);
-                k(1,1,e)   = val2;
-                k(1,4,e)   = -val2;
-                k(2,2:3,e) = val*[12 6*L(e)];
-                k(2,5:6,e) = val*[-12 6*L(e)];
-                k(3,2:3,e) = val*[6*L(e) 4*L(e)^2];
-                k(3,5:6,e) = val*[6*L(e) 2*L(e)^2];
-                k(4,1,e)   = -val2;
-                k(4,4,e)   = val2;
-                k(5,2:3,e) = val*[-12 -6*L(e)];
-                k(5,5:6,e) = val*[12 -6*L(e)];
-                k(6,2:3,e) = val*[6*L(e) 2*L(e)^2];
-                k(6,5:6,e) = val*[-6*L(e) 4*L(e)^2];                
+            for iElement = 1:obj.dim.nel
+                val = 1/L(iElement)^3*a(b(iElement),3)*a(b(iElement),1);
+                val2 = a(b(iElement),1)*a(b(iElement),2)/L(iElement);
+                Kelv(1,1,iElement)   = val2;
+                Kelv(1,4,iElement)   = -val2;
+                Kelv(2,2:3,iElement) = val*[12 6*L(iElement)];
+                Kelv(2,5:6,iElement) = val*[-12 6*L(iElement)];
+                Kelv(3,2:3,iElement) = val*[6*L(iElement) 4*L(iElement)^2];
+                Kelv(3,5:6,iElement) = val*[6*L(iElement) 2*L(iElement)^2];
+                Kelv(4,1,iElement)   = -val2;
+                Kelv(4,4,iElement)   = val2;
+                Kelv(5,2:3,iElement) = val*[-12 -6*L(iElement)];
+                Kelv(5,5:6,iElement) = val*[12 -6*L(iElement)];
+                Kelv(6,2:3,iElement) = val*[6*L(iElement) 2*L(iElement)^2];
+                Kelv(6,5:6,iElement) = val*[-6*L(iElement) 4*L(iElement)^2];                
             end
-            obj.K = k;
+            obj.Kel = Kelv;
         end
         
         function obj = assembleKglobal(obj)
-            
-        nel = obj.dim.nel;
-        nelDOF = obj.dim.nelDOF;        
-        kg = zeros(obj.dim.ndof,obj.dim.ndof);
-        Kel = obj.K;
-        
+            s      = obj.Td;
+            nel    = obj.dim.nel;
+            nelDOF = obj.dim.nelDOF;
+            Kgv    = zeros(obj.dim.ndof,obj.dim.ndof);
+            K      = obj.Kel;
             for e = 1:nel
-                Kel(:,:,e) = transpose(obj.R(:,:,e))*obj.K(:,:,e)*obj.R(:,:,e);
+                K(:,:,e) = transpose(obj.R(:,:,e))*obj.Kel(:,:,e)*obj.R(:,:,e);
                 for i = 1:nelDOF
                     I = s(e,i);
                     for j = 1:nelDOF
                         J = s(e,j);
-                        kg(I,J)=kg(I,J)+Kel(i,j,e);
+                        Kgv(I,J)=Kgv(I,J)+K(i,j,e);
                     end
                 end
             end
-         obj.Kg = kg;
+            obj.Kg = Kgv;
         end
         
         function obj = computeGeometry(obj)
+            obj.computePositionVectors();
+            obj.computeDistanceVector();
+            obj.computeElementLength();            
+        end
+        
+        function obj = computePositionVectors(obj)
             a = obj.data.x;
             b = obj.data.Tnod;
             e = 1:obj.dim.nel;
+            
             obj.x1 = a(b(e,1),1);
             obj.x2 = a(b(e,2),1);
             obj.y1 = a(b(e,1),2);
             obj.y2 = a(b(e,2),2);
-            obj.l = sqrt((obj.x2-obj.x1).^2+(obj.y2-obj.y1).^2);            
         end
-       
-        function obj = init(cParams,obj)
-            obj.data = cParams.data;
-            obj.dim  = cParams.dim;
+        
+        function obj = computeDistanceVector(obj)
+            obj.dX = obj.x2 - obj.x1;
+            obj.dY = obj.y2 - obj.y1;
+        end
+        
+        function obj = computeElementLength(obj)
+            obj.l = sqrt((obj.dX).^2+(obj.dY).^2);
         end
         
     end

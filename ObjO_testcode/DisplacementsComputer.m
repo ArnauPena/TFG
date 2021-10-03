@@ -1,31 +1,29 @@
 classdef DisplacementsComputer < handle
     
     properties (Access = public)
-       st
+       solvertype
        LHS
        RHS
        u
     end
     
     properties (Access = private)
-       Krr, Kll
-       Klr, Krl
-       Fl, Fr
-       ur, ul
-       vr, vl
+        K
+        F
+        ur, ul
+        v
     end
     
     methods (Access = public)
         
         function obj = DisplacementsComputer(cParams)
-            obj.init(cParams)
-            
+            obj.init(cParams)            
         end
         
-        function obj = computeDisplacement(obj)
-            obj.prepareSolverTerms();
-            obj.solveFreeDisplacements();
-            obj.computeDisplacementsVector();
+        function obj = compute(obj)
+            obj.computeSolverTerms();
+            obj.solveFreeDOFsDisplacements();
+            obj.computeVectorJoint();
         end
         
     end
@@ -33,32 +31,27 @@ classdef DisplacementsComputer < handle
     methods (Access = private)
         
         function init(obj,cParams)
-            obj.Kll = cParams.Kll;
-            obj.Krr = cParams.Krr;
-            obj.Klr = cParams.Klr;
-            obj.Krl = cParams.Krl;
-            obj.Fl  = cParams.Fl;
-            obj.ur  = cParams.ur;    
-            obj.Fr  = cParams.Fr;
-            obj.vl  = cParams.vl;
-            obj.vr  = cParams.vr;            
-            obj.st  = cParams.st;
+            obj.K          = cParams.K;
+            obj.F          = cParams.F;
+            obj.v          = cParams.v;
+            obj.ur         = cParams.ur;
+            obj.solvertype = cParams.solvertype;
         end
         
-        function obj = prepareSolverTerms(obj)
-            obj.LHS = obj.Kll;
-            obj.RHS = obj.Fl-obj.Klr*obj.ur;
+        function obj = computeSolverTerms(obj)
+            obj.LHS = obj.K.ll;
+            obj.RHS = obj.F.l-obj.K.lr*obj.ur;
         end
         
-        function obj = solveFreeDisplacements(obj)
-            solver   = Solver.create(obj.st);
+        function obj = solveFreeDOFsDisplacements(obj)
+            solver   = Solver.create(obj.solvertype);
             solution = solver.solve(obj.LHS, obj.RHS);
             obj.ul   = solution;
         end
         
-        function obj = computeDisplacementsVector(obj)
-            obj.u(obj.vl,1) = obj.ul;
-            obj.u(obj.vr,1) = obj.ur;
+        function obj = computeVectorJoint(obj)
+            obj.u(obj.v.l,1) = obj.ul;
+            obj.u(obj.v.r,1) = obj.ur;
         end
     end
     

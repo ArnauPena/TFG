@@ -1,14 +1,15 @@
 %% Object Oriented testing code %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Author : Arnau Pena Sapena %%%
-%%% Date : 15/09/2021%%%%%%%%%%%%%
+%%%     Date : 15/09/2021      %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clear; clc;
 
-solver_type = 'ITERATIVE';
-staticfiledata = 'staticData.m';
+s.solver_type = 'DIRECT';
+s.staticfiledata = 'staticData.m';
+s.stifnessmatrix = 'Kgt.mat';
 
-staticCase = Tester(staticfiledata,solver_type);
+staticCase = Tester(s);
 
 

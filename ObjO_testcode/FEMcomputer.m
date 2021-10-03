@@ -7,39 +7,39 @@ classdef FEMcomputer < handle
     properties (Access = private)
         data
         dim
-        Td
         Kglobal 
         Fext
-        R
-        K
         staticfiledata
         solvertype
-        vl,vr
-        Kll, Krr
-        Klr, Krl
-        Fl, Fr
+        stifnessmatrix
+        v
+        K
+        F
         ur
     end
     
     methods (Access = public)
-        function obj = FEMcomputer(staticfiledata,solver_type)
-            obj.staticfiledata = staticfiledata;
-            obj.solvertype = solver_type;
+        function obj = FEMcomputer(cParams)
+            obj.staticfiledata = cParams.staticfiledata;
+            obj.solvertype     = cParams.solver_type;
+            obj.stifnessmatrix = cParams.stifnessmatrix;
             obj.init();
         end
     end
     methods (Access = public)
         function obj = init(obj)
             run(obj.staticfiledata);
-            obj.data = data;            obj.dim = dim;
+            obj.data         = data;            
+            obj.dim          = dim;
             obj.displacement = displacement;
         end
     end
     methods (Access = public)        
         function obj = solve(obj)
             obj.computeStifnessMatrix();
+            obj.testStifnessMatrix();
             obj.computeFext();
-            obj.computeMatrixPartition();
+            obj.computeMatrixSplit();
             obj.computeDisplacements();
         end  
     end
@@ -48,75 +48,48 @@ classdef FEMcomputer < handle
         function obj = computeStifnessMatrix(obj)
             s.data = obj.data;
             s.dim  = obj.dim;
-%             kg = StifnessMatrixComputer(s);
-%             kg.computeStifnessMatrix();
-%             obj.Kglobal = kg.Kg;
-
-            a = ConnectivityMatrix(s);
-            a.computeConnectivityMatrix();
-            obj.Td = a.td;
-            s.Td = obj.Td;
-            
-            b = RotationMatrix(s);
-            b.computeRotationMatrix();
-            obj.R = b.r;
-            s.R = obj.R;
-            
-            c = Kcomputer(s);
-            c.computeK();
-            obj.K = c.k;
-            s.K = obj.K;
-                        
-            d = KglobalAssembler(s);
-            d.assembleKglobal();
-            obj.Kglobal = d.kg;
+            kg = StifnessMatrixComputer(s);
+            kg.compute();
+            obj.Kglobal = kg.Kg;
         end
         
         function obj = computeFext(obj)
            s.data = obj.data;
-           s.dim = obj.dim;
+           s.dim  = obj.dim;
            f = ForceComputer(s);
-           obj.Fext = f.computeForce();
+           obj.Fext = f.compute();
         end
         
-        function obj = computeMatrixPartition(obj)
-            
+        function obj = computeMatrixSplit(obj)           
             s.data    = obj.data;
             s.dim     = obj.dim;
             s.Kglobal = obj.Kglobal;
-            s.Fext    = obj.Fext;
-            
-            p = MatrixPartitionComputer(s);
-            p.computeMatrixPartition();
-            
-            obj.Kll = p.Kll;
-            obj.Klr = p.Klr;
-            obj.Krl = p.Krl;
-            obj.Krr = p.Krr;
-            obj.ur  = p.ur;
-            obj.vl  = p.vl;
-            obj.vr  = p.vr;
-            obj.Fr  = p.Fr;
-            obj.Fl  = p.Fl;
+            s.Fext    = obj.Fext;           
+            p = MatrixSplitterComputer(s);
+            p.compute();           
+            obj.K     = p.K;
+            obj.v     = p.v;
+            obj.F     = p.F;
+            obj.ur    = p.ur;
         end
         
         function obj = computeDisplacements(obj)
-            s.Kll = obj.Kll;
-            s.Klr = obj.Klr;
-            s.Krl = obj.Krl;
-            s.Krr = obj.Krr;
-            s.ur  = obj.ur;
-            s.vl  = obj.vl;
-            s.vr  = obj.vr;
-            s.Fr  = obj.Fr;
-            s.Fl  = obj.Fl;
-            s.st  = obj.solvertype;
-            
+            s.K           = obj.K;
+            s.v           = obj.v;
+            s.F           = obj.F;
+            s.ur          = obj.ur;
+            s.solvertype  = obj.solvertype;           
             sol = DisplacementsComputer(s);
-            sol.computeDisplacement();
+            sol.compute();
             obj.u = sol.u;
         end
-           
+        
+        function obj = testStifnessMatrix(obj)
+            s.Kglobal        = obj.Kglobal;
+            s.stifnessmatrix = obj.stifnessmatrix;
+            TestKglobal = StifnessMatrixTester(s);
+            TestKglobal.computeTest();
+        end
     end 
 end 
          

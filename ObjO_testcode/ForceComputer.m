@@ -15,13 +15,13 @@ classdef ForceComputer < handle
         end
         
         function obj = loadData(obj,cParams)
-            obj.dim = cParams.dim;
+            obj.dim  = cParams.dim;
             obj.data = cParams.data;
         end
     
         
-        function f = computeForce(obj)
-            f=zeros(obj.dim.ndof,1);
+        function f = compute(obj)
+            f     = zeros(obj.dim.ndof,1);
             Fdata = obj.data.Fdata;
             for k = 1:size(Fdata,1)
                 Node = Fdata(k,1); 
