@@ -6,7 +6,7 @@
 
 clear; clc;
 
-s.solver_type    = 'ITERATIVE';
+s.solver_type    = 'DIRECT';
 s.staticfiledata = 'staticData.m';
 s.stifnessmatrix = 'Kgt.mat';
 s.Kll            = 'Kll.mat';

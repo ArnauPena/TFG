@@ -119,7 +119,7 @@ classdef StifnessMatrixComputer < handle
         
         function obj = computeGeometry(obj)
             obj.computePositionVectors();
-            obj.computeDistanceVector();
+            obj.computeElementDistanceVector();
             obj.computeElementLength();            
         end
         
@@ -130,11 +130,10 @@ classdef StifnessMatrixComputer < handle
             obj.x1   = a(b(iElement,1),1);
             obj.x2   = a(b(iElement,2),1);
             obj.y1   = a(b(iElement,1),2);
-            obj.y2   = a(b(iElement,2),2);
-           
+            obj.y2   = a(b(iElement,2),2);           
         end
         
-        function obj = computeDistanceVector(obj)
+        function obj = computeElementDistanceVector(obj)
             obj.dX = obj.x2 - obj.x1;
             obj.dY = obj.y2 - obj.y1;
         end

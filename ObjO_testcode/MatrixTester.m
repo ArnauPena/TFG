@@ -14,7 +14,7 @@ classdef MatrixTester < handle
         end
         
         function compute(obj)
-            if obj.computeError()
+            if obj.computeIfPassed()
                 cprintf('comment',obj.matrixname);
                 cprintf('comment',' matrix is correct!\n');
             else
@@ -33,9 +33,9 @@ classdef MatrixTester < handle
             obj.matrixname  = s.matrixname;
         end
         
-        function passed = computeError(obj)
+        function passed = computeIfPassed(obj)
             maxdiff = obj.checkMaxDifference();
-            tolerance = 1e-5;
+            tolerance = 1e-10;
             if maxdiff > tolerance
                 passed = 0;
             else
@@ -44,7 +44,7 @@ classdef MatrixTester < handle
         end
         
         function maxdiff = checkMaxDifference(obj)
-            diff    = abs(obj.testedData - obj.testerData);
+            diff    = abs(obj.testedData - obj.testerData)./obj.testerData;
             maxdiff = max(max(diff));
         end
     end

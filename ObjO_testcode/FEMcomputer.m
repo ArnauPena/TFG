@@ -22,20 +22,20 @@ classdef FEMcomputer < handle
     
     methods (Access = public)
         function obj = FEMcomputer(cParams)
+            obj.init(cParams);
+        end
+    end
+    methods (Access = public)
+        function obj = init(obj,cParams)
             obj.staticfiledata = cParams.staticfiledata;
+            run(obj.staticfiledata);
             obj.solvertype     = cParams.solver_type;
             obj.stifnessmatrix = cParams.stifnessmatrix;
             obj.Kll            = cParams.Kll;
             obj.Fl             = cParams.Fl;
-            obj.init();
-        end
-    end
-    methods (Access = public)
-        function obj = init(obj)
-            run(obj.staticfiledata);
-            obj.data         = datav;            
-            obj.dim          = dimv;
-            obj.displacement = displacementv;
+            obj.data           = datav;            
+            obj.dim            = dimv;
+            obj.displacement   = displacementv;
         end
     end
     methods (Access = public)        
