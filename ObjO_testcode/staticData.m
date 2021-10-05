@@ -41,7 +41,7 @@ tan_e27 = sin_e27/cos_e27;
 
 % Nodal coordinates
 %  x(a,j) = coordinate of node a in the dimension j
-data.x = [
+datav.x = [
       0,          H1; % Node 1
       0,       H1+H2; % Node 2
       0,    H1+H2+H3; % Node 3
@@ -51,7 +51,7 @@ data.x = [
 
 % Nodal connectivities  
 %  Tnod(e,a) = global nodal number associated to node a of element e
-data.Tnod = [
+datav.Tnod = [
     1, 2; % Element 1-2
     2, 3; % Element 2-3
     3, 4; % Element 3-4
@@ -68,14 +68,14 @@ data.Tnod = [
 %  mat(m,1) = Young modulus of material m
 %  mat(m,2) = Section area of material m
 %  mat(m,3) = Section inertia of material m
-data.mat = [% Young M.        Section A.    Inertia
+datav.mat = [% Young M.        Section A.    Inertia
                E,               AA,        IzA;  % Material 1
                E,               AB,        IzB;  % Material 2
 ];
 
 % Material connectivities
 %  Tmat(e) = Row in mat corresponding to the material associated to element e 
-data.Tmat = [
+datav.Tmat = [
     1; % Element 1-2 / Material 1 (A)
     1; % Element 2-3 / Material 1 (A)
     1; % Element 3-4 / Material 1 (A)
@@ -91,7 +91,7 @@ N2s = 587999.205510907;
 A16 = R6/sig_rot;
 
 % Forces 
-data.Fdata = [
+datav.Fdata = [
     1 2 N2s;
     1 2 -R6*sin_e16;
     1 1 -R6*cos_e16;
@@ -100,7 +100,7 @@ data.Fdata = [
     ];
 
 % Fixed nodes
-data.fixNode = [
+datav.fixNode = [
     4 1 0;
     4 2 0;
     4 3 0;   
@@ -112,13 +112,13 @@ data.fixNode = [
     
 
 % Dimensions
-dim.nd = size(data.x,2);              % Number of dimensions
-dim.ni = 3;                      % Number of DOFs for each node
-dim.n = size(data.x,1);               % Total number of nodes
-dim.ndof = dim.ni*dim.n;                 % Total number of degrees of freedom
-dim.nne = size(data.Tnod,2);            % Number of nodes for each element
-dim.nelDOF = dim.ni*dim.nne;             % Number of DOFs for each element 
-dim.nel = size(data.Tnod,1);
+dimv.nd = size(datav.x,2);              % Number of dimensions
+dimv.ni = 3;                      % Number of DOFs for each node
+dimv.n = size(datav.x,1);               % Total number of nodes
+dimv.ndof = dimv.ni*dimv.n;                 % Total number of degrees of freedom
+dimv.nne = size(datav.Tnod,2);            % Number of nodes for each element
+dimv.nelDOF = dimv.ni*dimv.nne;             % Number of DOFs for each element 
+dimv.nel = size(datav.Tnod,1);
 
 % Expected Results
-displacement = [-0.113089885347818;0.000545745811563641;-0.184678309380802;-0.0511378511807242;7.31277774549792e-05;-0.146910332630846;-0.00532026958158725;-8.93400464261551e-05;-0.0428965220661880;0;0;0;0;0;0];
+displacementv = [-0.113089885347818;0.000545745811563641;-0.184678309380802;-0.0511378511807242;7.31277774549792e-05;-0.146910332630846;-0.00532026958158725;-8.93400464261551e-05;-0.0428965220661880;0;0;0;0;0;0];

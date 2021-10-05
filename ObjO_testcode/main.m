@@ -6,10 +6,11 @@
 
 clear; clc;
 
-s.solver_type = 'DIRECT';
+s.solver_type    = 'ITERATIVE';
 s.staticfiledata = 'staticData.m';
 s.stifnessmatrix = 'Kgt.mat';
-
+s.Kll            = 'Kll.mat';
+s.Fl             = 'Fl.mat';
 staticCase = Tester(s);
-
+clear s;
 

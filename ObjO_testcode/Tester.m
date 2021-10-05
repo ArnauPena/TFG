@@ -1,10 +1,11 @@
 classdef Tester < handle
     
-    properties (Access = private)
-        u  
+    properties (Access = private) 
+        matrixname
     end
     properties (Access = public)
         displacements
+                u 
     end
     
     methods (Access = public)
@@ -17,13 +18,12 @@ classdef Tester < handle
             obj.testFEM(s);
         end
     
-        function checkDisplacements(obj)
-            dif = abs(obj.u-obj.displacements)/obj.displacements;
-            if dif < 1e-10
-                cprintf('comment','Code is correct!');
-            else
-                cprintf('err','Something is wrong!');
-            end
+        function compute(obj)
+            s.tester     = obj.displacements;
+            s.tested     = obj.u;
+            s.matrixname = obj.matrixname;
+            TestDisplacements = MatrixTester(s);
+            TestDisplacements.compute();
         end
         
         function obj = testFEM(obj,s)
@@ -31,7 +31,8 @@ classdef Tester < handle
             Femtest.solve();
             obj.displacements = Femtest.displacement;
             obj.u             = Femtest.u;
-            obj.checkDisplacements();
+            obj.matrixname    = 'Displacements';
+            obj.compute();
         end
     end
 end

@@ -10,8 +10,10 @@ classdef MatrixSplitterComputer < handle
     properties (Access = private)
         data
         dim
-        Kglobal
-        Fext
+        matrix
+        vector
+        Kllt
+        Flt
     end
     
     methods (Access = public)
@@ -24,7 +26,9 @@ classdef MatrixSplitterComputer < handle
             obj.computeFixedDOFsSplit();            
             obj.computeFreeDOFsSplit();
             obj.computeMatrixJoint();
-            obj.computeVectorJoint();  
+            obj.computeVectorJoint();
+            obj.testFreeDOFsMatrix();
+            obj.testFreeDOFsVector();
         end 
         
     end
@@ -32,13 +36,13 @@ classdef MatrixSplitterComputer < handle
     methods (Access = private)
         
         function obj = computeFixedDOFsSplit(obj)
-            fNode  = obj.data.fixNode;
+            fNode   = obj.data.fixNode;
             obj.v.r = size(fNode,1);
-            obj.ur = size(fNode,1);
+            obj.ur  = size(fNode,1);
             
             for k = 1:size(fNode,1)
-                Node = fNode(k,1);
-                DOF = fNode(k,2);
+                Node         = fNode(k,1);
+                DOF          = fNode(k,2);
                 Displacement = fNode(k,3);
                 if DOF==1
                     obj.v.r(k,1) = 3*Node-2;
@@ -66,26 +70,45 @@ classdef MatrixSplitterComputer < handle
         end        
         
         function obj = computeMatrixJoint(obj)
-            Kg  = obj.Kglobal;
-            vlv = obj.v.l;
-            vrv = obj.v.r;
-            
-            obj.K.ll = Kg(vlv,vlv);
-            obj.K.rr = Kg(vrv,vrv);
-            obj.K.rl = Kg(vrv,vlv);
-            obj.K.lr = Kg(vlv,vrv);            
+            matrixv  = obj.matrix;
+            vlv      = obj.v.l;
+            vrv      = obj.v.r;           
+            obj.K.ll = matrixv(vlv,vlv);
+            obj.K.rr = matrixv(vrv,vrv);
+            obj.K.rl = matrixv(vrv,vlv);
+            obj.K.lr = matrixv(vlv,vrv);
         end
         
         function obj = computeVectorJoint(obj)           
-            obj.F.r(:,1) = obj.Fext(obj.v.r);
-            obj.F.l(:,1) = obj.Fext(obj.v.l);       
+            obj.F.r(:,1) = obj.vector(obj.v.r);
+            obj.F.l(:,1) = obj.vector(obj.v.l);       
         end
         
         function init(obj,cParams)
             obj.dim     = cParams.dim;
             obj.data    = cParams.data;
-            obj.Kglobal = cParams.Kglobal;
-            obj.Fext    = cParams.Fext;
+            obj.matrix  = cParams.matrix;
+            obj.vector  = cParams.vector;
+            obj.Kllt    = cParams.Kll;
+            obj.Flt     = cParams.Fl;
+        end
+        
+        function testFreeDOFsMatrix(obj)
+            load(obj.Kllt);
+            s.tested        = obj.K.ll;
+            s.tester        = Kll;
+            s.matrixname    = 'Kll';
+            TestKglobal = MatrixTester(s);
+            TestKglobal.compute();
+        end
+        
+        function testFreeDOFsVector(obj)
+            load(obj.Flt);
+            s.tested        = obj.F.l;
+            s.tester        = Fl;
+            s.matrixname    = 'Fl';
+            TestKglobal = MatrixTester(s);
+            TestKglobal.compute();
         end
         
     end

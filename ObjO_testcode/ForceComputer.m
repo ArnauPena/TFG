@@ -11,10 +11,10 @@ classdef ForceComputer < handle
     
     methods
         function obj = ForceComputer(cParams)
-            obj.loadData(cParams);
+            obj.init(cParams);
         end
         
-        function obj = loadData(obj,cParams)
+        function obj = init(obj,cParams)
             obj.dim  = cParams.dim;
             obj.data = cParams.data;
         end
@@ -25,7 +25,7 @@ classdef ForceComputer < handle
             Fdata = obj.data.Fdata;
             for k = 1:size(Fdata,1)
                 Node = Fdata(k,1); 
-                DOF = Fdata(k,2); 
+                DOF  = Fdata(k,2); 
                 Fmag = Fdata(k,3); 
                 if DOF==1
                     f(3*Node-2,1) = f(3*Node-2,1) + Fmag;

@@ -16,6 +16,8 @@ classdef FEMcomputer < handle
         K
         F
         ur
+        Fl
+        Kll
     end
     
     methods (Access = public)
@@ -23,15 +25,17 @@ classdef FEMcomputer < handle
             obj.staticfiledata = cParams.staticfiledata;
             obj.solvertype     = cParams.solver_type;
             obj.stifnessmatrix = cParams.stifnessmatrix;
+            obj.Kll            = cParams.Kll;
+            obj.Fl             = cParams.Fl;
             obj.init();
         end
     end
     methods (Access = public)
         function obj = init(obj)
             run(obj.staticfiledata);
-            obj.data         = data;            
-            obj.dim          = dim;
-            obj.displacement = displacement;
+            obj.data         = datav;            
+            obj.dim          = dimv;
+            obj.displacement = displacementv;
         end
     end
     methods (Access = public)        
@@ -63,8 +67,10 @@ classdef FEMcomputer < handle
         function obj = computeMatrixSplit(obj)           
             s.data    = obj.data;
             s.dim     = obj.dim;
-            s.Kglobal = obj.Kglobal;
-            s.Fext    = obj.Fext;           
+            s.matrix  = obj.Kglobal;
+            s.vector  = obj.Fext;
+            s.Kll     = obj.Kll;
+            s.Fl      = obj.Fl;
             p = MatrixSplitterComputer(s);
             p.compute();           
             obj.K     = p.K;
@@ -85,11 +91,14 @@ classdef FEMcomputer < handle
         end
         
         function obj = testStifnessMatrix(obj)
-            s.Kglobal        = obj.Kglobal;
-            s.stifnessmatrix = obj.stifnessmatrix;
-            TestKglobal = StifnessMatrixTester(s);
-            TestKglobal.computeTest();
+            load(obj.stifnessmatrix);
+            s.tested        = obj.Kglobal;
+            s.tester        = Kgt;
+            s.matrixname    = 'Stifness';
+            TestKglobal = MatrixTester(s);
+            TestKglobal.compute();
         end
+        
     end 
 end 
          
