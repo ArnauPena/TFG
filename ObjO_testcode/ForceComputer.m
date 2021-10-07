@@ -1,12 +1,8 @@
 classdef ForceComputer < handle
-    
-    properties (Access = public)
+     
+    properties (Access = private)
         dim
         data
-    end
-    
-    properties (Access = private)
-        F
     end
     
     methods

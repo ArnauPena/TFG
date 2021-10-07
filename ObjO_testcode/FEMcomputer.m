@@ -9,15 +9,12 @@ classdef FEMcomputer < handle
         dim
         Kglobal 
         Fext
-        staticfiledata
         solvertype
         stifnessmatrix
         v
         K
         F
         ur
-        Fl
-        Kll
     end
     
     methods (Access = public)
@@ -27,12 +24,8 @@ classdef FEMcomputer < handle
     end
     methods (Access = public)
         function obj = init(obj,cParams)
-            obj.staticfiledata = cParams.staticfiledata;
-            run(obj.staticfiledata);
+            run(cParams.staticFileData);
             obj.solvertype     = cParams.solver_type;
-            obj.stifnessmatrix = cParams.stifnessmatrix;
-            obj.Kll            = cParams.Kll;
-            obj.Fl             = cParams.Fl;
             obj.data           = datav;            
             obj.dim            = dimv;
             obj.displacement   = displacementv;
@@ -41,7 +34,6 @@ classdef FEMcomputer < handle
     methods (Access = public)        
         function obj = solve(obj)
             obj.computeStifnessMatrix();
-            obj.testStifnessMatrix();
             obj.computeFext();
             obj.computeMatrixSplit();
             obj.computeDisplacements();
@@ -69,8 +61,6 @@ classdef FEMcomputer < handle
             s.dim     = obj.dim;
             s.matrix  = obj.Kglobal;
             s.vector  = obj.Fext;
-            s.Kll     = obj.Kll;
-            s.Fl      = obj.Fl;
             p = MatrixSplitterComputer(s);
             p.compute();           
             obj.K     = p.K;
@@ -90,14 +80,6 @@ classdef FEMcomputer < handle
             obj.u = sol.u;
         end
         
-        function obj = testStifnessMatrix(obj)
-            load(obj.stifnessmatrix);
-            s.tested        = obj.Kglobal;
-            s.tester        = Kgt;
-            s.matrixname    = 'Stifness';
-            TestKglobal = MatrixTester(s);
-            TestKglobal.compute();
-        end
         
     end 
 end 

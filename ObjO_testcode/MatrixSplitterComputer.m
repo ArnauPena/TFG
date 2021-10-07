@@ -27,8 +27,6 @@ classdef MatrixSplitterComputer < handle
             obj.computeFreeDOFsSplit();
             obj.computeMatrixJoint();
             obj.computeVectorJoint();
-            obj.testFreeDOFsMatrix();
-            obj.testFreeDOFsVector();
         end 
         
     end
@@ -73,15 +71,21 @@ classdef MatrixSplitterComputer < handle
             matrixv  = obj.matrix;
             vlv      = obj.v.l;
             vrv      = obj.v.r;           
-            obj.K.ll = matrixv(vlv,vlv);
-            obj.K.rr = matrixv(vrv,vrv);
-            obj.K.rl = matrixv(vrv,vlv);
-            obj.K.lr = matrixv(vlv,vrv);
+            Kll      = matrixv(vlv,vlv);
+            Krr      = matrixv(vrv,vrv);
+            Krl      = matrixv(vrv,vlv);
+            Klr      = matrixv(vlv,vrv);
+            obj.K.ll = Kll;
+            obj.K.rr = Krr;
+            obj.K.rl = Krl;
+            obj.K.lr = Klr;
         end
         
         function obj = computeVectorJoint(obj)           
-            obj.F.r(:,1) = obj.vector(obj.v.r);
-            obj.F.l(:,1) = obj.vector(obj.v.l);       
+            Fr(:,1) = obj.vector(obj.v.r);
+            Fl(:,1) = obj.vector(obj.v.l);
+            obj.F.l = Fl;
+            obj.F.r = Fr;
         end
         
         function init(obj,cParams)
@@ -89,26 +93,6 @@ classdef MatrixSplitterComputer < handle
             obj.data    = cParams.data;
             obj.matrix  = cParams.matrix;
             obj.vector  = cParams.vector;
-            obj.Kllt    = cParams.Kll;
-            obj.Flt     = cParams.Fl;
-        end
-        
-        function testFreeDOFsMatrix(obj)
-            load(obj.Kllt);
-            s.tested        = obj.K.ll;
-            s.tester        = Kll;
-            s.matrixname    = 'Kll';
-            TestKglobal = MatrixTester(s);
-            TestKglobal.compute();
-        end
-        
-        function testFreeDOFsVector(obj)
-            load(obj.Flt);
-            s.tested        = obj.F.l;
-            s.tester        = Fl;
-            s.matrixname    = 'Fl';
-            TestKglobal = MatrixTester(s);
-            TestKglobal.compute();
         end
         
     end

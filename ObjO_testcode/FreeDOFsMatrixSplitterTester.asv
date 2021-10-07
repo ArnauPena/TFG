@@ -1,0 +1,48 @@
+classdef FreeDOFsMatrixSplitterTester < handle
+    
+    properties (Access = private)
+        matrix
+        vector
+        loadedData
+        data
+        dim
+        testedPropertyName
+    end
+    
+    methods (Access = public)
+        
+        function obj = FreeDOFsMatrixSplitterTester(cParams)
+            obj.init(cParams)           
+        end
+        
+        function obj = compute(obj)
+            obj.computeFreeDOFsMatrixSplit();
+            obj.computeTest();
+        end
+        
+    end
+    
+    methods (Access = private)
+        
+        function init(obj,cParams)
+            run(cParams.staticFileData);
+            load(cParams.matrix);
+            load(cParams.vector);
+            load(cParams.loadedFreeDOFsMatrix);
+            obj.matrix               = Kgt;
+            obj.vector               = f;
+            obj.loadedData           = Fl;
+            obj.data                 = datav;
+            obj.dim                  = dimv;
+            obj.testedPropertyName   = cParams.testedPropertyName;
+        end
+        
+        function obj = computeFreeDOFsMatrixSplit(obj)
+            s.matrix = obj.matrix;
+            s.vector = obj.vector;
+                
+        end
+        
+    end
+    
+end
