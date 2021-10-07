@@ -9,8 +9,8 @@ classdef MatrixTester < handle
     
     methods (Access = public)
         
-        function obj = MatrixTester(s)
-            obj.init(s)           
+        function obj = MatrixTester(cParams)
+            obj.init(cParams)           
         end
         
         function compute(obj)
@@ -27,10 +27,10 @@ classdef MatrixTester < handle
     
     methods (Access = private)
         
-        function init(obj,s)
-            obj.testedData  = s.tested;
-            obj.testerData  = s.tester;
-            obj.matrixname  = s.matrixname;
+        function init(obj,cParams)
+            obj.testedData  = cParams.tested;
+            obj.testerData  = cParams.tester;
+            obj.matrixname  = cParams.matrixname;
         end
         
         function passed = computeIfPassed(obj)
