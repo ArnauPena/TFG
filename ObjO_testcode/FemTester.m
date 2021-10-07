@@ -36,8 +36,8 @@ classdef FemTester < handle
             s.solver_type     = obj.solver_type;
             Analysis = FEMcomputer(s);
             Analysis.solve();
-            obj.loadedDisplacements   = Analysis.displacement;
-            obj.computedDisplacements = Analysis.u;
+            obj.loadedDisplacements   = Analysis.loadedDisplacements;
+            obj.computedDisplacements = Analysis.displacements;
         end
         
         function testFEM(obj,s)

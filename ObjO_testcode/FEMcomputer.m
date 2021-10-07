@@ -1,86 +1,85 @@
 classdef FEMcomputer < handle
 
     properties (Access = public)
-        u
-        displacement
+        displacements
+        loadedDisplacements
     end
     properties (Access = private)
         data
         dim
-        Kglobal 
+        StifnessMatrix 
         Fext
         solvertype
-        stifnessmatrix
         v
-        K
-        F
+        splittedStifnessMatrix
+        splittedForceVector
         ur
     end
     
     methods (Access = public)
+        
         function obj = FEMcomputer(cParams)
             obj.init(cParams);
         end
-    end
-    methods (Access = public)
-        function obj = init(obj,cParams)
-            run(cParams.staticFileData);
-            obj.solvertype     = cParams.solver_type;
-            obj.data           = datav;            
-            obj.dim            = dimv;
-            obj.displacement   = displacementv;
-        end
-    end
-    methods (Access = public)        
+        
         function obj = solve(obj)
             obj.computeStifnessMatrix();
             obj.computeFext();
             obj.computeMatrixSplit();
             obj.computeDisplacements();
         end  
+        
     end
     
     methods (Access = private)
+        
+        function obj = init(obj,cParams)
+            run(cParams.staticFileData);
+            obj.solvertype           = cParams.solver_type;
+            obj.data                 = datav;
+            obj.dim                  = dimv;
+            obj.loadedDisplacements  = displacementv;
+        end
+        
         function obj = computeStifnessMatrix(obj)
-            s.data = obj.data;
-            s.dim  = obj.dim;
-            kg = StifnessMatrixComputer(s);
-            kg.compute();
-            obj.Kglobal = kg.Kg;
+            s.data             = obj.data;
+            s.dim              = obj.dim;
+            Solution           = StifnessMatrixComputer(s);
+            Solution.compute();
+            obj.StifnessMatrix = Solution.Kg;
         end
         
         function obj = computeFext(obj)
-           s.data = obj.data;
-           s.dim  = obj.dim;
-           f = ForceComputer(s);
-           obj.Fext = f.compute();
+           s.data   = obj.data;
+           s.dim    = obj.dim;
+           Solution = ForceComputer(s);
+           obj.Fext = Solution.compute();
         end
         
         function obj = computeMatrixSplit(obj)           
             s.data    = obj.data;
             s.dim     = obj.dim;
-            s.matrix  = obj.Kglobal;
+            s.matrix  = obj.StifnessMatrix;
             s.vector  = obj.Fext;
-            p = MatrixSplitterComputer(s);
-            p.compute();           
-            obj.K     = p.K;
-            obj.v     = p.v;
-            obj.F     = p.F;
-            obj.ur    = p.ur;
+            Solution  = MatrixSplitterComputer(s);
+            Solution.compute();           
+            obj.splittedStifnessMatrix = Solution.K;
+            obj.v                   = Solution.v;
+            obj.splittedForceVector = Solution.F;
+            obj.ur                  = Solution.ur;
         end
         
         function obj = computeDisplacements(obj)
-            s.K           = obj.K;
-            s.v           = obj.v;
-            s.F           = obj.F;
-            s.ur          = obj.ur;
-            s.solvertype  = obj.solvertype;           
-            sol = DisplacementsComputer(s);
-            sol.compute();
-            obj.u = sol.u;
+            s.K               = obj.splittedStifnessMatrix;
+            s.v               = obj.v;
+            s.F               = obj.splittedForceVector;
+            s.ur              = obj.ur;
+            s.solvertype      = obj.solvertype;           
+            Solution          = DisplacementsComputer(s);
+            Solution.compute();
+            obj.displacements = Solution.u;
         end
-        
-        
+           
     end 
 end 
          

@@ -35,7 +35,7 @@ classdef TestComputer < handle
         
         function passed = check(obj)
             maxdiff   = obj.computeMaxDifference();
-            tolerance = 1e-8;
+            tolerance = 1e-5;
             if maxdiff > tolerance
                 passed = 0;
             else
@@ -46,6 +46,7 @@ classdef TestComputer < handle
         function maxdiff = computeMaxDifference(obj)
             diff    = obj.computeDifference();
             maxdiff = max(max(diff));
+            disp(maxdiff);
         end
         
         function diff = computeDifference(obj)
