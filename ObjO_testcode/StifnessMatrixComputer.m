@@ -17,6 +17,7 @@ classdef StifnessMatrixComputer < handle
     end
     
     methods (Access = public)
+        
         function obj = StifnessMatrixComputer(cParams)
             obj.init(cParams);
         end
@@ -29,6 +30,7 @@ classdef StifnessMatrixComputer < handle
             obj.rotateElementMatrix();
             obj.assembleKglobal();
         end
+        
     end
     
     methods (Access = private)

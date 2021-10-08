@@ -53,7 +53,8 @@ classdef FEMcomputer < handle
            s.data   = obj.data;
            s.dim    = obj.dim;
            Solution = ForceComputer(s);
-           obj.Fext = Solution.compute();
+           Solution.compute();
+           obj.Fext = Solution.forceVector;
         end
         
         function obj = computeMatrixSplit(obj)           
