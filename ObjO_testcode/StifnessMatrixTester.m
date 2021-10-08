@@ -37,7 +37,7 @@ classdef StifnessMatrixTester < handle
             s.dim    = obj.dim;
             Solution = StifnessMatrixComputer(s);
             Solution.compute();
-            obj.computedStifnessMatrix = Solution.Kg;
+            obj.computedStifnessMatrix = Solution.stifnessMatrix;
         end
         
         function test(obj)

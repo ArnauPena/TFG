@@ -32,26 +32,33 @@ classdef MatrixSplitterComputer < handle
     end
     
     methods (Access = private)
+                
+        function init(obj,cParams)
+            obj.dim     = cParams.dim;
+            obj.data    = cParams.data;
+            obj.matrix  = cParams.matrix;
+            obj.vector  = cParams.vector;
+        end
         
         function obj = computeFixedDOFsSplit(obj)
             fNode   = obj.data.fixNode;
-            obj.v.r = size(fNode,1);
-            obj.ur  = size(fNode,1);
-            
+            vr = size(fNode,1);
+            obj.ur  = size(fNode,1);           
             for k = 1:size(fNode,1)
                 Node         = fNode(k,1);
                 DOF          = fNode(k,2);
                 Displacement = fNode(k,3);
                 if DOF==1
-                    obj.v.r(k,1) = 3*Node-2;
+                    vr(k,1)  = 3*Node-2;
                 end
                 if DOF==2
-                    obj.v.r(k,1) = 3*Node-1;
+                    vr(k,1)  = 3*Node-1;
                 end
                 if DOF==3
-                    obj.v.r(k,1) = 3*Node;
+                    vr(k,1)  = 3*Node;
                 end
-                obj.ur(k,1) = Displacement;
+                obj.v.r      = vr;
+                obj.ur(k,1)  = Displacement;
             end
         end
         
@@ -86,13 +93,6 @@ classdef MatrixSplitterComputer < handle
             Fl(:,1) = obj.vector(obj.v.l);
             obj.F.l = Fl;
             obj.F.r = Fr;
-        end
-        
-        function init(obj,cParams)
-            obj.dim     = cParams.dim;
-            obj.data    = cParams.data;
-            obj.matrix  = cParams.matrix;
-            obj.vector  = cParams.vector;
         end
         
     end

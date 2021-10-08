@@ -46,7 +46,7 @@ classdef FEMcomputer < handle
             s.dim              = obj.dim;
             Solution           = StifnessMatrixComputer(s);
             Solution.compute();
-            obj.StifnessMatrix = Solution.Kg;
+            obj.StifnessMatrix = Solution.stifnessMatrix;
         end
         
         function obj = computeFext(obj)
@@ -77,7 +77,7 @@ classdef FEMcomputer < handle
             s.solvertype      = obj.solvertype;           
             Solution          = DisplacementsComputer(s);
             Solution.compute();
-            obj.displacements = Solution.u;
+            obj.displacements = Solution.displacements;
         end
            
     end 

@@ -1,4 +1,4 @@
-classdef TestRunner < handle
+classdef Tester < handle
         
     properties (Access = private)
         directSolver
@@ -12,15 +12,15 @@ classdef TestRunner < handle
     
     methods (Access = public)
         
-        function obj = TestRunner(cParams)
+        function obj = Tester(cParams)
             obj.init(cParams)            
         end
         
         function obj = run(obj)
             obj.runFEMtest();
             obj.runStifnessMatrixTest();
-%             obj.runFreeDOFsMatrixTest();
-%             obj.runFreeDOFsVectorTest();
+            obj.runFreeDOFsMatrixTest();
+            obj.runFreeDOFsVectorTest();
         end
         
     end
@@ -45,7 +45,7 @@ classdef TestRunner < handle
         function obj = runStifnessMatrixTest(obj)
             s.staticFileData       = obj.staticFileData;
             s.loadedStifnessMatrix = obj.loadedStifnessMatrix;
-            s.testedPropertyName = 'Stifness Matrix solution';
+            s.testedPropertyName   = 'Stifness Matrix solution';
             Test1 = StifnessMatrixTester(s);
             Test1.compute();
         end
@@ -55,13 +55,17 @@ classdef TestRunner < handle
             s.matrix               = obj.loadedStifnessMatrix;
             s.vector               = obj.forceVector;
             s.loadedFreeDOFsMatrix = obj.loadedFreeDOFsMatrix;
-            s.testedPropertyName   = 'Free DOFs Matrix solution';
-            
+            s.testedPropertyName   = 'Free DOFs Matrix solution';            
             Test2 = FreeDOFsMatrixTester(s);
             Test2.compute();
         end
         
         function obj = runFreeDOFsVectorTest(obj)
+            s.staticFileData       = obj.staticFileData;
+            s.matrix               = obj.loadedStifnessMatrix;
+            s.vector               = obj.forceVector;
+            s.loadedFreeDOFsVector = obj.loadedFreeDOFsVector;
+            s.testedPropertyName   = 'Free DOFs Vector solution';
             Test3 = FreeDOFsVectorTester(s);
             Test3.compute();
         end

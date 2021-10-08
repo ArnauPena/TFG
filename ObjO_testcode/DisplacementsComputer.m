@@ -4,7 +4,7 @@ classdef DisplacementsComputer < handle
        solvertype
        LHS
        RHS
-       u
+       displacements
     end
     
     properties (Access = private)
@@ -39,8 +39,12 @@ classdef DisplacementsComputer < handle
         end
         
         function obj = computeSolverTerms(obj)
-            obj.LHS = obj.K.ll;
-            obj.RHS = obj.F.l-obj.K.lr*obj.ur;
+            Kll     = obj.K.ll;
+            Fl      = obj.F.l;
+            Klr     = obj.K.lr;
+            urv     = obj.ur;
+            obj.LHS = Kll;
+            obj.RHS = Fl-Klr*urv;
         end
         
         function obj = solveFreeDOFsDisplacements(obj)
@@ -50,8 +54,9 @@ classdef DisplacementsComputer < handle
         end
         
         function obj = computeVectorJoint(obj)
-            obj.u(obj.v.l,1) = obj.ul;
-            obj.u(obj.v.r,1) = obj.ur;
+            u(obj.v.l,1)      = obj.ul;
+            u(obj.v.r,1)      = obj.ur;
+            obj.displacements = u;
         end
     end
     
