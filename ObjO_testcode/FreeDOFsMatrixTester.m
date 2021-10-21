@@ -1,6 +1,6 @@
 classdef FreeDOFsMatrixTester < TestComputer
     
-    properties (Access = protected)
+    properties (Access = private)
         matrix
         vector
         data

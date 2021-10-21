@@ -1,6 +1,6 @@
 classdef FemTester < TestComputer
     
-    properties (Access = protected) 
+    properties (Access = private) 
         matrixname
         displacements
         u

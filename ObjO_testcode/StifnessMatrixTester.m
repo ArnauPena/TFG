@@ -1,6 +1,6 @@
 classdef StifnessMatrixTester < TestComputer
         
-    properties (Access = protected)
+    properties (Access = private)
        data
        dim
     end
