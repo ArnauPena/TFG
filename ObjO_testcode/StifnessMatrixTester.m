@@ -1,11 +1,8 @@
-classdef StifnessMatrixTester < handle
+classdef StifnessMatrixTester < TestComputer
         
-    properties (Access = private)
+    properties (Access = protected)
        data
        dim
-       loadedStifnessMatrix
-       computedStifnessMatrix
-       testedPropertyName
     end
     
     methods (Access = public)
@@ -16,7 +13,7 @@ classdef StifnessMatrixTester < handle
         
         function obj = compute(obj)
             obj.computeStifnessMatrix();
-            obj.test();
+            obj.checkResult();
         end
         
     end
@@ -26,7 +23,7 @@ classdef StifnessMatrixTester < handle
         function init(obj,cParams)
             run(cParams.staticFileData);
             load(cParams.loadedStifnessMatrix);
-            obj.loadedStifnessMatrix = Kgt;
+            obj.loadedData           = Kgt;
             obj.data                 = datav;
             obj.dim                  = dimv;
             obj.testedPropertyName   = cParams.testedPropertyName;
@@ -37,15 +34,7 @@ classdef StifnessMatrixTester < handle
             s.dim    = obj.dim;
             Solution = StifnessMatrixComputer(s);
             Solution.compute();
-            obj.computedStifnessMatrix = Solution.stifnessMatrix;
-        end
-        
-        function test(obj)
-            s.loaded   = obj.loadedStifnessMatrix;
-            s.computed = obj.computedStifnessMatrix;
-            s.name     = obj.testedPropertyName;
-            Test = TestComputer(s);
-            Test.compute();
+            obj.computedData = Solution.stifnessMatrix;
         end
         
     end

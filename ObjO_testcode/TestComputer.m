@@ -1,6 +1,6 @@
 classdef TestComputer < handle
     
-    properties (Access = private)
+    properties (Access = protected)
         loadedData
         computedData
         testedPropertyName
@@ -9,11 +9,16 @@ classdef TestComputer < handle
     
     methods (Access = public)
         
-        function obj = TestComputer(cParams)
-            obj.init(cParams)           
+        function obj = TestComputer()
+            
         end
         
-        function compute(obj)
+    end
+    
+    methods (Access = protected)
+        
+        function checkResult(obj)
+
             if obj.check()
                 cprintf('comment',obj.testedPropertyName);
                 cprintf('comment',' is correct!\n');
@@ -26,12 +31,6 @@ classdef TestComputer < handle
     end
     
     methods (Access = private)
-        
-        function init(obj,cParams)
-            obj.loadedData          = cParams.loaded;
-            obj.computedData        = cParams.computed;
-            obj.testedPropertyName  = cParams.name;
-        end
         
         function passed = check(obj)
             maxdiff   = obj.computeMaxDifference();

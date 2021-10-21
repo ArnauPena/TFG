@@ -1,13 +1,10 @@
-classdef FreeDOFsVectorTester < handle
+classdef FreeDOFsVectorTester < TestComputer
 
-    properties (Access = private)
+    properties (Access = protected)
         matrix
         vector
         data
         dim
-        computedFreeDOFsVector
-        testedPropertyName
-        loadedData
     end
     
     methods (Access = public)
@@ -18,7 +15,7 @@ classdef FreeDOFsVectorTester < handle
         
         function obj = compute(obj)
             obj.computeFreeDOFsVectorSplit();
-            obj.test();
+            obj.checkResult();
         end
         
     end
@@ -43,17 +40,9 @@ classdef FreeDOFsVectorTester < handle
             s.vector = obj.vector;
             s.data   = obj.data;
             s.dim    = obj.dim;
-            Solution = MatrixSplitterComputer(s);
+            Solution = DOFsManager(s);
             Solution.compute();
-            obj.computedFreeDOFsVector = Solution.F.l;
-        end
-        
-        function test(obj)
-            s.loaded   = obj.loadedData;
-            s.computed = obj.computedFreeDOFsVector;
-            s.name     = obj.testedPropertyName;
-            Test = TestComputer(s);
-            Test.compute();            
+            obj.computedData = Solution.F.l;
         end
         
     end

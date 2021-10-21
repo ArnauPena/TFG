@@ -1,6 +1,6 @@
-classdef FemTester < handle
+classdef FemTester < TestComputer
     
-    properties (Access = private) 
+    properties (Access = protected) 
         matrixname
         displacements
         u
@@ -8,7 +8,6 @@ classdef FemTester < handle
         computedDisplacements
         staticFileData
         solver_type
-        testedPropertyName
     end
     
     methods (Access = public)
@@ -18,7 +17,7 @@ classdef FemTester < handle
         
         function obj = compute(obj)
             obj.computeFEM();
-            obj.testFEM();
+            obj.checkResult();
         end
         
     end
@@ -36,18 +35,9 @@ classdef FemTester < handle
             s.solver_type     = obj.solver_type;
             Analysis = FEMcomputer(s);
             Analysis.solve();
-            obj.loadedDisplacements   = Analysis.loadedDisplacements;
-            obj.computedDisplacements = Analysis.displacements;
-        end
-        
-        function testFEM(obj,s)
-            s.loaded   = obj.loadedDisplacements;
-            s.computed = obj.computedDisplacements;
-            s.name     = obj.testedPropertyName;
-            Test = TestComputer(s);
-            Test.compute();
+            obj.loadedData   = Analysis.loadedDisplacements;
+            obj.computedData = Analysis.displacements;
         end
         
     end
 end
-

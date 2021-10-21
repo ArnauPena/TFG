@@ -14,6 +14,7 @@ classdef FEMcomputer < handle
         splittedStifnessMatrix
         splittedForceVector
         ur
+        manager
     end
     
     methods (Access = public)
@@ -62,12 +63,13 @@ classdef FEMcomputer < handle
             s.dim     = obj.dim;
             s.matrix  = obj.StifnessMatrix;
             s.vector  = obj.Fext;
-            Solution  = MatrixSplitterComputer(s);
+            Solution  = DOFsManager(s);
             Solution.compute();           
             obj.splittedStifnessMatrix = Solution.K;
-            obj.v                   = Solution.v;
-            obj.splittedForceVector = Solution.F;
-            obj.ur                  = Solution.ur;
+            obj.v                      = Solution.v;
+            obj.splittedForceVector    = Solution.F;
+            obj.ur                     = Solution.ur;
+            obj.manager                = Solution;
         end
         
         function obj = computeDisplacements(obj)
@@ -75,7 +77,8 @@ classdef FEMcomputer < handle
             s.v               = obj.v;
             s.F               = obj.splittedForceVector;
             s.ur              = obj.ur;
-            s.solvertype      = obj.solvertype;           
+            s.solvertype      = obj.solvertype; 
+            s.manager         = obj.manager;
             Solution          = DisplacementsComputer(s);
             Solution.compute();
             obj.displacements = Solution.displacements;

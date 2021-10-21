@@ -12,6 +12,7 @@ classdef DisplacementsComputer < handle
         F
         ur, ul
         v
+        manager
     end
     
     methods (Access = public)
@@ -36,6 +37,7 @@ classdef DisplacementsComputer < handle
             obj.v          = cParams.v;
             obj.ur         = cParams.ur;
             obj.solvertype = cParams.solvertype;
+            obj.manager    = cParams.manager;
         end
         
         function obj = computeSolverTerms(obj)
@@ -54,10 +56,14 @@ classdef DisplacementsComputer < handle
         end
         
         function obj = computeVectorJoint(obj)
-            u(obj.v.l,1)      = obj.ul;
-            u(obj.v.r,1)      = obj.ur;
+            vr = obj.v.r;
+            vl = obj.v.l;
+            ulv = obj.ul;
+            urv = obj.ur;
+            u = obj.manager.jointVector(ulv,urv,vl,vr);
             obj.displacements = u;
         end
+        
     end
     
 end
